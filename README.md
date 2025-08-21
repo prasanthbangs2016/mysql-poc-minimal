@@ -2,6 +2,15 @@
 
 This is a minimal, beginner-friendly MySQL proof of concept using Docker and Adminer.
 
+## Objective
+
+This POC provides a minimal, reproducible MySQL environment you can spin up in seconds to:
+- Explore and demo core relational concepts (primary/foreign keys, composite indexes, joins, EXPLAIN).
+- Experiment with a realistic schema (customers, orders) and seeded data.
+- Test and profile queries locally using Adminer and the mysql client.
+- Offer a safe, resettable sandbox for learning, prototyping, and local development.
+- Serve as a base you can extend by adding SQL files under sql/ and adjusting .env.
+
 What you’ll get
 - MySQL 8 running locally via Docker
 - Adminer web UI to browse and run SQL
