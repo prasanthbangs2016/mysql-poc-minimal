@@ -1,72 +1,71 @@
 # MSSQL POC (Local, No Docker)
 
-This is a simple Proof of Concept to run on your own laptop using Microsoft SQL Server (no Docker).
+Simple POC to run on your own laptop using Microsoft SQL Server. No Docker.
 
-## Objective
+## Goal
+- Learn basic SQL: primary key, foreign key, index, joins, execution plan.
+- Use small demo tables: customers and orders.
+- Run in SSMS or Azure Data Studio.
+- Easy to reset and try again.
 
-- Learn and show basic SQL concepts: primary key, foreign key, index, joins, Execution Plan.
-- Work with a small demo schema: customers and orders.
-- Run everything locally in SSMS or Azure Data Studio.
-- Reset and try again easily.
-
-## What you need
-
-- Microsoft SQL Server installed on your laptop (Developer or Express is fine).
-- One SQL client:
-  - SQL Server Management Studio (SSMS), or
+## You need
+- Microsoft SQL Server (Developer or Express).
+- One tool:
+  - SSMS (SQL Server Management Studio), or
   - Azure Data Studio
 
 ## Setup (5 minutes)
+1) Open SSMS or Azure Data Studio and connect to your local SQL Server.
+2) Open this file: MSSQL/sql/01_init.sql
+3) Run the full script. It will:
+   - create database pocdb (if not exists)
+   - create tables
+   - insert sample data
+   - create index
 
-1) Open SSMS (or Azure Data Studio) and connect to your local SQL Server.
-2) Open the file sql/01_init.sql from this repo (MSSQL/sql/01_init.sql).
-3) Run the whole script (it will:
-   - create database pocdb if not present,
-   - create tables,
-   - add sample data,
-   - create an index).
+## Check data
+Run in database pocdb:
 
-## Verify
+```sql
+SELECT COUNT(*) FROM dbo.customers;
+SELECT COUNT(*) FROM dbo.orders;
+```
 
-Run these in pocdb:
-
-- SELECT COUNT(*) FROM dbo.customers;
-- SELECT COUNT(*) FROM dbo.orders;
-
-Example query (get Alice’s recent orders):
-
+Example: get Alice’s recent orders
+```sql
 SELECT o.id, o.status, o.placed_at
 FROM dbo.orders o
 JOIN dbo.customers c ON c.id = o.customer_id
 WHERE c.email = 'alice@example.com'
 ORDER BY o.placed_at DESC;
+```
 
-## What to demo
+## What to show in demo
+- Tables: dbo.customers, dbo.orders
+- Primary key and foreign key
+- Composite index on (customer_id, placed_at)
+- Run query and see Execution Plan (SSMS: Include Actual Execution Plan)
 
-- Show tables: dbo.customers, dbo.orders
-- Explain primary key and foreign key relation
-- Show composite index on (customer_id, placed_at)
-- Run the example query and view the execution plan (SSMS: Include Actual Execution Plan)
+## Reset (fresh start)
+Option 1: Drop and recreate database
+```sql
+USE master;
+DROP DATABASE pocdb; -- close any connections first
+```
+Then run MSSQL/sql/01_init.sql again.
 
-## Reset data (fresh start)
-
-Option 1: Drop and recreate database (simple)
-- In SSMS:
-  - USE master;
-  - DROP DATABASE pocdb;  (make sure no active connections)
-- Run MSSQL/sql/01_init.sql again.
-
-Option 2: Just clear tables
-- TRUNCATE TABLE dbo.orders;
-- TRUNCATE TABLE dbo.customers;
-- Re-run only the insert parts from the script.
+Option 2: Only clear tables
+```sql
+TRUNCATE TABLE dbo.orders;
+TRUNCATE TABLE dbo.customers;
+```
+Then run only the INSERT parts.
 
 ## Troubleshooting
-
-- Cannot connect to SQL Server?
-  - Ensure SQL Server service is running.
+- Cannot connect?
+  - Start SQL Server service.
   - Try server name: (local) or . or localhost
 - Login issue?
-  - Use Windows Authentication or correct SQL login.
-- Script fails on “database in use”?  
-  - Close other query windows using pocdb, switch to master, then try again.
+  - Use Windows Authentication or correct SQL user.
+- “Database in use” error?
+  - Close other query windows using pocdb, switch to master, and try again.
